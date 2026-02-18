@@ -1,56 +1,108 @@
-<!DOCTYPE html>
-<html lang="en">
+<html lang="en"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Imposter - Word Game</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;600;700&amp;display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
 
-<head>
-  <!-- 
-      This is an HTML comment
-      You can write text in a comment and the content won't be visible in the page
-    -->
-
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="icon" href="https://glitch.com/favicon.ico" />
-
-  <!--
-      This is the page head - it contains info the browser uses
-      Like the title, which appears on the browser tab but not inside the page
-      Further down you'll see the content that displays in the page
-    -->
-  <title>Hello World!</title>
-
-  <!-- The website stylesheet -->
-  <link rel="stylesheet" href="/style.css" />
-
-  <!-- The website JavaScript file -->
-  <script src="/script.js" defer></script>
+    <style>
+        
+    </style>
 </head>
-
 <body>
-  <!--
-      The body includes the content you see in the page
-      Each element is defined using tags, like this <div></div>
-      The attributes like class="wrapper" let us style elements in the CSS
-    -->
-  <div class="wrapper">
-    <div class="content" role="main">
-      <h1 class="title">Oh hi website!</h1>
-      <img src="/cool-website.svg" class="illustration" alt="cool website" />
-      <div class="instructions">
-        <p>
-          Fork <a href="https://github.com/glitchdotcom/website-to-compute">this project</a> and open it in a GitHub Codespace.
-        </p>
-        <p> Follow the steps in the README to deploy your new website to Fastly in a few steps!
-        </p>
 
-      </div>
+    <div id="star-container"></div>
 
-      <footer class="footer">
-        <div>
-          <a class="remix" href="https://github.com/glitchdotcom/website-to-compute">🚧 Get your own site</a>
+    <main class="screen" id="menu-screen">
+        <div class="hero-image-container">
+            <img src="public/Imposter.png" alt="Imposter Character" class="hero-img" id="hero-image">
+            <svg id="fallback-svg" viewBox="0 0 100 120" style="width: 100%; height: 100%; fill: #e0aaff; filter: drop-shadow(0 0 10px #9d4edd);">
+                <path d="M50 10 C 20 10, 10 40, 10 60 L 10 110 L 90 110 L 90 60 C 90 40, 80 10, 50 10 Z M 30 35 A 10 10 0 0 1 30 35" fill="none" stroke="#e0aaff" stroke-width="3"></path>
+                <circle cx="35" cy="55" r="5" fill="#e0aaff"></circle>
+                <circle cx="65" cy="55" r="5" fill="#e0aaff"></circle>
+                <path d="M 40 70 Q 50 80 60 70" stroke="#e0aaff" stroke-width="3" fill="none"></path>
+            </svg>
         </div>
-      </footer>
-    </div>
-  </div>
-</body>
+        <h1>Imposter</h1>
+        <div class="subtitle">Word Game</div>
+        <p class="tagline">A party game of hidden ideas &amp; cunning clues</p>
+        <div class="btn-group">
+            <button class="btn btn-primary" id="btn-go-settings">Get Started</button>
+            <button class="btn btn-secondary" id="btn-rules">How to Play</button>
+        </div>
+    </main>
 
-</html>
+    <!-- SCREEN 2: Game Settings -->
+    <div class="screen hidden" id="settings-screen">
+        <div class="settings-header">
+            <button class="back-btn" id="btn-back-menu">❮</button>
+            <h2 class="settings-title">Game Settings</h2>
+            <div class="settings-spacer"></div>
+        </div>
+
+        <!-- Player Name Manager -->
+        <div class="player-manager">
+            <div class="input-row">
+                <input type="text" id="player-input" class="name-input" placeholder="Enter Name" autocomplete="off">
+                <button class="add-btn" id="btn-add-player">+</button>
+            </div>
+            <div class="player-list" id="player-list"></div>
+            <div class="player-count-display">
+                Players: <span id="count-display">0</span> (Min 3)
+            </div>
+        </div>
+
+
+        <div class="setting-row">
+            <div class="setting-label">Imposters?</div>
+            <div class="counter-control">
+                <button class="counter-btn" onclick="updateImposter(-1)">−</button>
+                <span class="counter-val" id="val-imposters">1</span>
+                <button class="counter-btn" onclick="updateImposter(1)">+</button>
+                <button class="random-btn" onclick="randomizeImposter()">Random</button>
+            </div>
+        </div>
+
+
+        <div class="mode-selector">
+            <div class="mode-card active" id="mode-word" onclick="setMode('word')">
+                <div class="mode-title">Word Game</div>
+                <div class="mode-desc">Find who doesn't know the secret word</div>
+            </div>
+           
+        </div>
+
+
+        <div class="category-row">
+            <div class="select-wrapper">
+                <select id="category-select">
+                    <option value="loading">Loading Categories...</option>
+                </select>
+            </div>
+        </div>
+
+
+        <div class="btn-group">
+            <button class="btn btn-primary btn-start-game" id="btn-final-start">Start Game</button>
+        </div>
+    </div>
+
+
+    <div class="modal-overlay" id="rules-modal">
+        <div class="modal-content">
+            <h2 class="modal-title">How to Play</h2>
+            <div class="modal-body">
+                <p>1. Add player names.</p>
+                <p>2. Each player secretly checks their screen.</p>
+                <p>3. Ask questions and give clues to find the Imposter!</p>
+            </div>
+            <button class="close-btn" id="btn-close-modal">Got it!</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+
+</body></html>

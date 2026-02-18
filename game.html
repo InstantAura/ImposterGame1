@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Game - Imposter</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        /* --- Existing Styles --- */
+        #game-container {
+            display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+            height: 100%; padding-top: 40px; padding-bottom: 20px; width: 100%; max-width: 500px;
+            margin: 0 auto; box-sizing: border-box; z-index: 10;
+        }
+
+        .game-header { text-align: center; margin-bottom: 20px; }
+        .game-title { font-size: 3rem; margin: 0; font-weight: 700; color: var(--text-white); }
+        .game-instruction {
+            font-size: 1.1rem; color: var(--text-muted); margin-top: 10px;
+            line-height: 1.5; padding: 0 20px;
+        }
+
+        .player-grid {
+            display: grid; grid-template-columns: 1fr; gap: 15px; width: 100%; padding: 0 20px; overflow-y: auto;
+            max-height: 60vh; 
+        }
+
+        .player-card-btn {
+            display: flex; align-items: center; justify-content: flex-start;
+            width: 100%; padding: 15px 20px;
+            background: var(--card-bg);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            color: var(--text-white);
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.1s, background 0.2s;
+            text-decoration: none;
+            box-sizing: border-box;
+        }
+        .player-card-btn:active { transform: scale(0.98); background: rgba(255,255,255,0.15); }
+
+        .player-icon {
+            width: 45px; height: 45px; min-width: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-purple), #5a189a);
+            display: flex; align-items: center; justify-content: center;
+            margin-right: 15px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        .debug-info { margin-top: auto; font-size: 0.8rem; color: rgba(255,255,255,0.3); text-align: center; display: none; }
+
+        /* --- Navigation Button --- */
+        .btn-go-voting {
+            margin-top: 20px; margin-bottom: 10px;
+            width: 90%; max-width: 320px; padding: 15px;
+            background: linear-gradient(180deg, #ff4d6d 0%, #c9184a 100%);
+            color: white; font-family: 'Fredoka', sans-serif; font-size: 1.3rem; font-weight: 700;
+            border: none; border-radius: 50px;
+            box-shadow: 0 5px 15px rgba(255, 77, 109, 0.4);
+            cursor: pointer; transition: transform 0.1s, opacity 0.3s;
+        }
+        .btn-go-voting:active { transform: scale(0.95); }
+        
+        /* Utility to hide elements */
+        .hidden { display: none !important; }
+
+        /* --- Reveal Modal Styles --- */
+        #reveal-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.9); z-index: 100;
+            display: none; flex-direction: column; align-items: center; justify-content: center;
+            opacity: 0; transition: opacity 0.3s ease;
+        }
+        #reveal-modal.active { display: flex; opacity: 1; }
+
+        .reveal-content {
+            width: 90%; max-width: 400px; text-align: center;
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .reveal-title { font-size: 2rem; color: var(--text-white); margin-bottom: 5px; }
+        .reveal-category { font-size: 1.2rem; color: var(--accent-purple); margin-bottom: 30px; font-weight: 600; }
+
+        .reveal-card {
+            width: 100%; height: 200px;
+            background: linear-gradient(135deg, #3c096c, #240046);
+            border-radius: 20px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            transition: transform 0.2s; position: relative; overflow: hidden;
+            border: 2px solid rgba(255,255,255,0.1);
+        }
+        .reveal-card:active { transform: scale(0.97); }
+
+        .card-hidden-text { color: var(--text-white); font-size: 1.2rem; margin-top: 10px; opacity: 0.8; }
+        .hand-icon { font-size: 3rem; margin-bottom: 10px; }
+        .revealed-word { font-size: 2.5rem; font-weight: 700; color: #4cc9f0; text-align: center; padding: 0 20px; }
+        .revealed-imposter { font-size: 3rem; font-weight: 700; color: var(--danger-color); text-transform: uppercase; }
+        .reveal-card.imposter-mode { border: 3px solid var(--danger-color); background: linear-gradient(135deg, #4a0e1e, #2d0210); }
+
+        .btn-got-it {
+            margin-top: 30px;
+            background: linear-gradient(180deg, #9d4edd 0%, #7b2cbf 100%);
+            border: none; border-radius: 50px;
+            color: white; font-family: 'Fredoka', sans-serif;
+            font-size: 1.5rem; font-weight: 600;
+            padding: 15px 40px; box-shadow: 0 0 20px rgba(123, 44, 191, 0.4);
+            cursor: pointer;
+        }
+        .btn-got-it:active { transform: scale(0.95); }
+    </style>
+</head>
+<body>
+    <div id="star-container"></div>
+
+    <div id="game-container">
+        <div class="game-header">
+            <h1 class="game-title">Players</h1>
+            <p class="game-instruction">Tap your name to reveal your word,<br>then pass the device to the next player.</p>
+        </div>
+
+        <div id="player-buttons-area" class="player-grid"></div>
+
+        <!-- Button starts hidden -->
+        <button class="btn-go-voting hidden" id="btn-go-voting">Go to Results</button>
+
+        <div class="debug-info">
+            Category: <span id="debug-cat"></span> | Word: <span id="debug-word"></span>
+        </div>
+    </div>
+
+    <!-- Reveal Modal -->
+    <div id="reveal-modal">
+        <div class="reveal-content">
+            <h2 class="reveal-title" id="modal-player-name">The word for Player 1</h2>
+            <div class="reveal-category" id="modal-category">Category: Animals</div>
+
+            <div class="reveal-card" id="reveal-card-box">
+                <div id="card-content-hidden" style="display:flex; flex-direction:column; align-items:center;">
+                    <div class="hand-icon">👆</div>
+                    <div class="card-hidden-text">Tap the box to reveal</div>
+                </div>
+                <div id="card-content-revealed" style="display:none;"></div>
+            </div>
+
+            <button class="btn-got-it" id="btn-got-it">Got it!</button>
+        </div>
+    </div>
+
+    <script>
+        // 1. Load Data
+        const savedDataJSON = localStorage.getItem('imposterGameData');
+        let gameState = {};
+        if (savedDataJSON) { gameState = JSON.parse(savedDataJSON); } 
+        else { alert("Error: Game data not found. Returning to menu."); window.location.href = 'index.html'; }
+
+        // 2. Assign Roles
+        let imposterIndices = [];
+        const totalPlayers = gameState.playerNames.length;
+        const impostersCount = gameState.imposters;
+        while(imposterIndices.length < impostersCount) {
+            let r = Math.floor(Math.random() * totalPlayers);
+            if(imposterIndices.indexOf(r) === -1) imposterIndices.push(r);
+        }
+
+        // 3. Track who has seen their card
+        let viewedPlayers = new Set();
+
+        // 4. Generate Stars
+        const starContainer = document.getElementById('star-container');
+        for (let i = 0; i < 50; i++) {
+            const star = document.createElement('div');
+            star.classList.add('star');
+            star.style.left = `${Math.random() * 100}%`; star.style.top = `${Math.random() * 100}%`;
+            star.style.width = `${Math.random() * 3 + 1}px`; star.style.height = `${Math.random() * 3 + 1}px`;
+            star.style.animationDuration = `${Math.random() * 3 + 2}s`;
+            starContainer.appendChild(star);
+        }
+
+        // 5. Modal Elements
+        const modal = document.getElementById('reveal-modal');
+        const btnGoResults = document.getElementById('btn-go-voting');
+        
+        const modalPlayerName = document.getElementById('modal-player-name');
+        const modalCategory = document.getElementById('modal-category');
+        const revealBox = document.getElementById('reveal-card-box');
+        const contentHidden = document.getElementById('card-content-hidden');
+        const contentRevealed = document.getElementById('card-content-revealed');
+        const btnGotIt = document.getElementById('btn-got-it');
+
+        let isRevealed = false;
+
+        function openPlayerReveal(index) {
+            const playerName = gameState.playerNames[index];
+            const isImposter = imposterIndices.includes(index);
+
+            // Store current index so we can mark them as 'viewed' later
+            modal.dataset.currentIndex = index;
+
+            isRevealed = false;
+            revealBox.classList.remove('imposter-mode');
+            contentHidden.style.display = 'flex';
+            contentRevealed.style.display = 'none';
+            contentRevealed.innerHTML = '';
+            
+            modalPlayerName.innerText = `The word for ${playerName}`;
+            modalCategory.innerText = `Category: ${gameState.category}`;
+            revealBox.dataset.isImposter = isImposter;
+            modal.classList.add('active');
+        }
+
+        revealBox.addEventListener('click', () => {
+            if (isRevealed) return; 
+            isRevealed = true;
+            const isImposter = revealBox.dataset.isImposter === 'true';
+            contentHidden.style.display = 'none';
+            contentRevealed.style.display = 'block';
+            if (isImposter) {
+                revealBox.classList.add('imposter-mode');
+                contentRevealed.innerHTML = `<div class="revealed-imposter">IMPOSTER</div>`;
+            } else {
+                contentRevealed.innerHTML = `<div class="revealed-word">${gameState.chosenWord}</div>`;
+            }
+        });
+
+        btnGotIt.addEventListener('click', () => {
+            // Mark player as viewed
+            const index = parseInt(modal.dataset.currentIndex);
+            viewedPlayers.add(index);
+
+            // Check if all players have viewed
+            if (viewedPlayers.size === totalPlayers) {
+                btnGoResults.classList.remove('hidden');
+            }
+
+            modal.classList.remove('active');
+        });
+
+        // 6. Render Buttons
+        const buttonsContainer = document.getElementById('player-buttons-area');
+        gameState.playerNames.forEach((name, index) => {
+            const btn = document.createElement('div');
+            btn.className = 'player-card-btn';
+            btn.onclick = () => openPlayerReveal(index);
+            const icon = document.createElement('div');
+            icon.className = 'player-icon'; icon.innerText = 'P';
+            const span = document.createElement('span'); span.innerText = name;
+            btn.appendChild(icon); btn.appendChild(span);
+            buttonsContainer.appendChild(btn);
+        });
+
+        // 7. Navigation
+        document.getElementById('btn-go-voting').addEventListener('click', () => {
+            const dataToSave = { imposterIndices: imposterIndices, ...gameState };
+            localStorage.setItem('imposterGameData', JSON.stringify(dataToSave));
+            window.location.href = 'results.html';
+        });
+
+        // 8. Debug
+        if(document.getElementById('debug-cat')) {
+            document.getElementById('debug-cat').innerText = gameState.category;
+            document.getElementById('debug-word').innerText = gameState.chosenWord;
+        }
+        window.addEventListener('keydown', (event) => {
+            if (event.key.toLowerCase() === 't') {
+                const debugPanel = document.querySelector('.debug-info');
+                debugPanel.style.display = debugPanel.style.display === 'block' ? 'none' : 'block';
+            }
+        });
+    </script>
+</body>
+</html>

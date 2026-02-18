@@ -1,0 +1,81 @@
+{
+  "Animals": [
+    "Dog", "Cat", "Lion", "Tiger", "Elephant", "Monkey", "Giraffe", "Zebra",
+    "Bear", "Penguin", "Kangaroo", "Panda", "Eagle", "Shark", "Dolphin",
+    "Wolf", "Fox", "Horse", "Cow", "Sheep", "Goat", "Crocodile", "Alligator",
+    "Owl", "Hawk", "Snake", "Frog", "Turtle", "Octopus",
+    "Rabbit", "Deer", "Moose", "Leopard", "Cheetah", "Rhino",
+    "Hippo", "Koala", "Flamingo", "Peacock", "Parrot", "Whale"
+  ],
+
+  "Movies": [
+    "Titanic", "Avatar", "Star Wars", "Harry Potter", "The Matrix",
+    "Frozen", "Joker", "Lion King", "Toy Story", "Jurassic Park",
+    "Inception", "Interstellar", "Avengers", "Spider-Man", "Batman",
+    "Iron Man", "Shrek", "Finding Nemo", "Up", "Gladiator",
+    "The Dark Knight", "Black Panther", "Thor", "Hulk",
+    "Minions", "Cars", "Coco", "Deadpool", "Transformers", "Rocky"
+  ],
+
+  "Food": [
+    "Pizza", "Burger", "Sushi", "Pasta", "Salad", "Tacos",
+    "Steak", "Ice Cream", "Chocolate", "Pancakes",
+    "Fries", "Sandwich", "Ramen", "Fried Rice", "Chicken",
+    "Donuts", "Cookies", "Cake", "Waffles", "Hot Dog",
+    "Burrito", "Nachos", "Soup", "Lasagna", "Cereal",
+    "Omelette", "Bacon", "Shrimp", "Dumplings", "Spaghetti"
+  ],
+
+  "Places": [
+    "Beach", "Mountain", "Hospital", "School", "Library",
+    "Airport", "Supermarket", "Park", "Restaurant", "Gym",
+    "Mall", "Zoo", "Museum", "Stadium", "Cinema",
+    "Hotel", "Factory", "Office", "Playground", "Aquarium",
+    "Bakery", "Pharmacy", "Police Station", "Fire Station",
+    "Bank", "Courtroom", "Subway", "Bridge", "Harbor", "Campground"
+  ],
+
+  "Sports": [
+    "Soccer", "Basketball", "Baseball", "Football", "Tennis",
+    "Hockey", "Volleyball", "Cricket", "Rugby", "Golf",
+    "Swimming", "Track", "Wrestling", "Boxing", "Skateboarding",
+    "Surfing", "Snowboarding", "Skiing", "Cycling",
+    "Badminton", "Karate", "Judo", "Archery", "Gymnastics"
+  ],
+
+  "Brands": [
+    "Nike", "Adidas", "Apple", "Samsung", "Microsoft",
+    "Google", "Amazon", "McDonalds", "CocaCola", "Pepsi",
+    "Toyota", "Honda", "Ford", "Tesla", "Sony",
+    "PlayStation", "Xbox", "Gucci", "Prada", "Lego"
+  ],
+
+  "Objects": [
+    "Chair", "Table", "Phone", "Laptop", "Backpack",
+    "Bottle", "Clock", "Television", "Remote", "Keyboard",
+    "Mouse", "Headphones", "Camera", "Microwave", "Refrigerator",
+    "Toothbrush", "Wallet", "Umbrella", "Glasses", "Watch",
+    "Notebook", "Pen", "Pencil", "Mirror", "Candle"
+  ],
+
+  "Locations": [
+    "New York", "Los Angeles", "London", "Paris", "Tokyo",
+    "Dubai", "Rome", "Sydney", "Toronto", "Berlin",
+    "Chicago", "Miami", "Las Vegas", "Seoul", "Madrid",
+    "Mexico City", "Beijing", "Moscow", "Cairo", "Rio"
+  ],
+
+  "Games": [
+    "Minecraft", "Fortnite", "Roblox", "Among Us", "Call of Duty",
+    "Valorant", "Apex Legends", "Rocket League", "Overwatch", "FIFA",
+    "NBA 2K", "GTA", "Legend of Zelda", "Mario Kart",
+    "Clash Royale", "Clash of Clans", "Brawl Stars", "Terraria"
+  ],
+
+  "Jobs": [
+    "Doctor", "Teacher", "Engineer", "Police Officer", "Firefighter",
+    "Chef", "Pilot", "Lawyer", "Scientist", "Nurse",
+    "Architect", "Farmer", "Actor", "Musician", "Athlete",
+    "Programmer", "Designer", "Dentist", "Photographer", "Mechanic"
+  ]
+}

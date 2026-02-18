@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Results</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        #results-container {
+            display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+            height: 100%; padding-top: 40px; padding-bottom: 20px; width: 100%; max-width: 500px;
+            margin: 0 auto; box-sizing: border-box; z-index: 10; overflow-y: auto;
+        }
+
+        .results-header { text-align: center; margin-bottom: 30px; }
+        .results-title { font-size: 3rem; margin: 0; font-weight: 700; color: var(--text-white); }
+        .results-subtitle { font-size: 1.2rem; color: var(--accent-purple); margin-top: 10px; font-weight: 600; }
+
+
+        .result-box {
+            width: 90%; padding: 25px 20px;
+            border-radius: 20px;
+            text-align: center;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            position: relative;
+        }
+
+        .result-label {
+            font-size: 0.9rem; color: rgba(255,255,255,0.6); 
+            text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 10px; font-weight: 600;
+        }
+
+        .typing-content {
+            font-size: 1.8rem; font-weight: 700; min-height: 45px; line-height: 1.2;
+        }
+
+
+        .cursor {
+            display: inline-block; width: 3px; height: 1.8rem; background-color: white;
+            margin-left: 5px; animation: blink 1s infinite; vertical-align: middle;
+        }
+        .cursor.hidden { display: none; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+
+        .imposter-box {
+            background: linear-gradient(135deg, #4a0e1e, #2d0210);
+            border: 2px solid var(--danger-color);
+        }
+        .imposter-box .typing-content { color: var(--danger-color); }
+        .imposter-box .cursor { background-color: var(--danger-color); }
+
+
+        .word-box {
+            background: linear-gradient(135deg, #240046, #10002b);
+            border: 2px solid #ffd700;
+        }
+        .word-box .typing-content { color: #ffd700; }
+        .word-box .cursor { background-color: #ffd700; }
+
+
+        .player-result-grid {
+            display: none; 
+            grid-template-columns: 1fr; gap: 15px; width: 90%;
+            opacity: 0; transition: opacity 1s ease;
+        }
+        .player-result-grid.visible { display: grid; opacity: 1; }
+
+        .player-result-card {
+            background: var(--card-bg); border-radius: 15px;
+            padding: 15px; display: flex; justify-content: space-between; align-items: center;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .player-name { font-size: 1.2rem; font-weight: 600; color: white; }
+        .role-badge {
+            padding: 5px 15px; border-radius: 20px; font-size: 0.9rem; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .role-imposter { background: var(--danger-color); color: white; box-shadow: 0 0 10px rgba(255, 77, 109, 0.4); }
+        .role-civilian { background: rgba(255,255,255,0.1); color: #aaa; }
+
+        .btn-action {
+            margin-top: 30px; width: 90%; padding: 15px; border-radius: 50px;
+            border: none; color: white; font-family: 'Fredoka', sans-serif; font-size: 1.3rem; font-weight: 700;
+            cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.3); margin-bottom: 15px;
+        }
+        .btn-home { background: var(--primary-purple); }
+        .btn-home:active { transform: scale(0.95); }
+    </style>
+</head>
+<body>
+
+    <div id="star-container"></div>
+
+    <div id="results-container">
+        
+        <div class="results-header">
+            <h1 class="results-title">Results</h1>
+            <div class="results-subtitle">The game is over!</div>
+        </div>
+
+
+        <div class="result-box imposter-box">
+            <div class="result-label">The Imposter Was</div>
+            <div>
+                <span id="imposter-output" class="typing-content"></span><span id="imposter-cursor" class="cursor">&nbsp;</span>
+            </div>
+        </div>
+
+
+        <div class="result-box word-box">
+            <div class="result-label">Secret Word</div>
+            <div>
+                <span id="word-output" class="typing-content"></span><span id="word-cursor" class="cursor hidden">&nbsp;</span>
+            </div>
+        </div>
+
+
+        <div class="player-result-grid" id="results-list">
+            <!-- Injected via JS -->
+        </div>
+
+        <button class="btn-action btn-home" onclick="window.location.href='index.html'">Back to Menu</button>
+    </div>
+
+    <script>
+        // load data
+        const savedDataJSON = localStorage.getItem('imposterGameData');
+        let gameState = {};
+        if (savedDataJSON) { gameState = JSON.parse(savedDataJSON); } 
+        else { alert("No game data found. Returning to menu."); window.location.href = 'index.html'; }
+
+        // generate the damn stars
+        const starContainer = document.getElementById('star-container');
+        for (let i = 0; i < 50; i++) {
+            const star = document.createElement('div');
+            star.classList.add('star');
+            star.style.left = `${Math.random() * 100}%`; star.style.top = `${Math.random() * 100}%`;
+            star.style.width = `${Math.random() * 3 + 1}px`; star.style.height = `${Math.random() * 3 + 1}px`;
+            star.style.animationDuration = `${Math.random() * 3 + 2}s`;
+            starContainer.appendChild(star);
+        }
+
+        // text appear
+        const imposterIndices = gameState.imposterIndices || [];
+        const imposterNames = gameState.playerNames.filter((_, i) => imposterIndices.includes(i));
+        
+        const imposterText = imposterNames.length === 1 ? imposterNames[0] : imposterNames.join(' & ');
+        const secretWordText = gameState.chosenWord;
+
+        // type anim
+        const impOutput = document.getElementById('imposter-output');
+        const wordOutput = document.getElementById('word-output');
+        const impCursor = document.getElementById('imposter-cursor');
+        const wordCursor = document.getElementById('word-cursor');
+        const resultsList = document.getElementById('results-list');
+
+        function typeWriter(element, text, speed, callback) {
+            let i = 0;
+            element.innerHTML = "";
+            function type() {
+                if (i < text.length) {
+                    element.innerHTML += text.charAt(i);
+                    i++;
+                    setTimeout(type, speed);
+                } else {
+                    if (callback) callback();
+                }
+            }
+            type();
+        }
+
+        //sequuence
+        setTimeout(() => {
+            //imposter name
+            typeWriter(impOutput, imposterText, 100, () => {
+                impCursor.classList.add('hidden');
+                wordCursor.classList.remove('hidden'); 
+                
+                
+                setTimeout(() => {
+                    
+                    typeWriter(wordOutput, secretWordText, 50, () => {
+                        wordCursor.classList.add('hidden'); 
+                        showDetailedResults(); 
+                    });
+                }, 500);
+            });
+        }, 500);
+    </script>
+</body>
+</html>

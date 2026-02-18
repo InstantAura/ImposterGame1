@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Results - Imposter</title>
+    <title>Results</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -21,7 +21,7 @@
         .results-title { font-size: 3rem; margin: 0; font-weight: 700; color: var(--text-white); }
         .results-subtitle { font-size: 1.2rem; color: var(--accent-purple); margin-top: 10px; font-weight: 600; }
 
-        /* --- Shared Box Styles --- */
+
         .result-box {
             width: 90%; padding: 25px 20px;
             border-radius: 20px;
@@ -41,7 +41,7 @@
             font-size: 1.8rem; font-weight: 700; min-height: 45px; line-height: 1.2;
         }
 
-        /* Cursor Animation */
+
         .cursor {
             display: inline-block; width: 3px; height: 1.8rem; background-color: white;
             margin-left: 5px; animation: blink 1s infinite; vertical-align: middle;
@@ -49,7 +49,7 @@
         .cursor.hidden { display: none; }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
 
-        /* --- Box 1: Imposter (Red Theme) --- */
+
         .imposter-box {
             background: linear-gradient(135deg, #4a0e1e, #2d0210);
             border: 2px solid var(--danger-color);
@@ -57,7 +57,7 @@
         .imposter-box .typing-content { color: var(--danger-color); }
         .imposter-box .cursor { background-color: var(--danger-color); }
 
-        /* --- Box 2: Secret Word (Gold Theme) --- */
+
         .word-box {
             background: linear-gradient(135deg, #240046, #10002b);
             border: 2px solid #ffd700;
@@ -65,7 +65,7 @@
         .word-box .typing-content { color: #ffd700; }
         .word-box .cursor { background-color: #ffd700; }
 
-        /* --- Player List (Hidden initially) --- */
+
         .player-result-grid {
             display: none; 
             grid-template-columns: 1fr; gap: 15px; width: 90%;
@@ -106,7 +106,7 @@
             <div class="results-subtitle">The game is over!</div>
         </div>
 
-        <!-- BOX 1: The Imposter(s) -->
+
         <div class="result-box imposter-box">
             <div class="result-label">The Imposter Was</div>
             <div>
@@ -114,7 +114,7 @@
             </div>
         </div>
 
-        <!-- BOX 2: The Secret Word -->
+
         <div class="result-box word-box">
             <div class="result-label">Secret Word</div>
             <div>
@@ -122,7 +122,7 @@
             </div>
         </div>
 
-        <!-- Detailed List (Appears after typing) -->
+
         <div class="player-result-grid" id="results-list">
             <!-- Injected via JS -->
         </div>
@@ -131,13 +131,13 @@
     </div>
 
     <script>
-        // 1. Load Data
+        // load data
         const savedDataJSON = localStorage.getItem('imposterGameData');
         let gameState = {};
         if (savedDataJSON) { gameState = JSON.parse(savedDataJSON); } 
         else { alert("No game data found. Returning to menu."); window.location.href = 'index.html'; }
 
-        // 2. Generate Stars
+        // generate the damn stars
         const starContainer = document.getElementById('star-container');
         for (let i = 0; i < 50; i++) {
             const star = document.createElement('div');
@@ -148,14 +148,14 @@
             starContainer.appendChild(star);
         }
 
-        // 3. Prepare Texts
+        // text appear
         const imposterIndices = gameState.imposterIndices || [];
         const imposterNames = gameState.playerNames.filter((_, i) => imposterIndices.includes(i));
         
         const imposterText = imposterNames.length === 1 ? imposterNames[0] : imposterNames.join(' & ');
         const secretWordText = gameState.chosenWord;
 
-        // 4. Typewriter Logic (Sequential)
+        // type anim
         const impOutput = document.getElementById('imposter-output');
         const wordOutput = document.getElementById('word-output');
         const impCursor = document.getElementById('imposter-cursor');
@@ -177,19 +177,19 @@
             type();
         }
 
-        // Start Sequence
+        //sequuence
         setTimeout(() => {
-            // Step 1: Type Imposter
-            typeWriter(impOutput, imposterText, 150, () => {
-                impCursor.classList.add('hidden'); // Hide first cursor
-                wordCursor.classList.remove('hidden'); // Show second cursor
+            //imposter name
+            typeWriter(impOutput, imposterText, 100, () => {
+                impCursor.classList.add('hidden');
+                wordCursor.classList.remove('hidden'); 
                 
-                // Small pause before second box
+                
                 setTimeout(() => {
-                    // Step 2: Type Secret Word
-                    typeWriter(wordOutput, secretWordText, 150, () => {
-                        wordCursor.classList.add('hidden'); // Hide second cursor
-                        showDetailedResults(); // Show list
+                    
+                    typeWriter(wordOutput, secretWordText, 50, () => {
+                        wordCursor.classList.add('hidden'); 
+                        showDetailedResults(); 
                     });
                 }, 500);
             });

@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="style.css">
 
     <style>
-        /* --- Existing Styles --- */
+    
         #game-container {
             display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
             height: 100%; padding-top: 40px; padding-bottom: 20px; width: 100%; max-width: 500px;
@@ -60,7 +60,7 @@
 
         .debug-info { margin-top: auto; font-size: 0.8rem; color: rgba(255,255,255,0.3); text-align: center; display: none; }
 
-        /* --- Navigation Button --- */
+
         .btn-go-voting {
             margin-top: 20px; margin-bottom: 10px;
             width: 90%; max-width: 320px; padding: 15px;
@@ -72,10 +72,10 @@
         }
         .btn-go-voting:active { transform: scale(0.95); }
         
-        /* Utility to hide elements */
+
         .hidden { display: none !important; }
 
-        /* --- Reveal Modal Styles --- */
+
         #reveal-modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.9); z-index: 100;
@@ -133,7 +133,7 @@
 
         <div id="player-buttons-area" class="player-grid"></div>
 
-        <!-- Button starts hidden -->
+
         <button class="btn-go-voting hidden" id="btn-go-voting">Go to Results</button>
 
         <div class="debug-info">
@@ -141,7 +141,7 @@
         </div>
     </div>
 
-    <!-- Reveal Modal -->
+ 
     <div id="reveal-modal">
         <div class="reveal-content">
             <h2 class="reveal-title" id="modal-player-name">The word for Player 1</h2>
@@ -160,13 +160,13 @@
     </div>
 
     <script>
-        // 1. Load Data
+        // load data
         const savedDataJSON = localStorage.getItem('imposterGameData');
         let gameState = {};
         if (savedDataJSON) { gameState = JSON.parse(savedDataJSON); } 
         else { alert("Error: Game data not found. Returning to menu."); window.location.href = 'index.html'; }
 
-        // 2. Assign Roles
+        // random role assign
         let imposterIndices = [];
         const totalPlayers = gameState.playerNames.length;
         const impostersCount = gameState.imposters;
@@ -175,10 +175,10 @@
             if(imposterIndices.indexOf(r) === -1) imposterIndices.push(r);
         }
 
-        // 3. Track who has seen their card
+        // card
         let viewedPlayers = new Set();
 
-        // 4. Generate Stars
+        // 
         const starContainer = document.getElementById('star-container');
         for (let i = 0; i < 50; i++) {
             const star = document.createElement('div');
@@ -189,7 +189,7 @@
             starContainer.appendChild(star);
         }
 
-        // 5. Modal Elements
+        // 
         const modal = document.getElementById('reveal-modal');
         const btnGoResults = document.getElementById('btn-go-voting');
         
@@ -206,7 +206,7 @@
             const playerName = gameState.playerNames[index];
             const isImposter = imposterIndices.includes(index);
 
-            // Store current index so we can mark them as 'viewed' later
+            // view later js
             modal.dataset.currentIndex = index;
 
             isRevealed = false;
@@ -236,11 +236,11 @@
         });
 
         btnGotIt.addEventListener('click', () => {
-            // Mark player as viewed
+            // 
             const index = parseInt(modal.dataset.currentIndex);
             viewedPlayers.add(index);
 
-            // Check if all players have viewed
+            // 
             if (viewedPlayers.size === totalPlayers) {
                 btnGoResults.classList.remove('hidden');
             }
@@ -248,7 +248,7 @@
             modal.classList.remove('active');
         });
 
-        // 6. Render Buttons
+        // 
         const buttonsContainer = document.getElementById('player-buttons-area');
         gameState.playerNames.forEach((name, index) => {
             const btn = document.createElement('div');
@@ -261,14 +261,14 @@
             buttonsContainer.appendChild(btn);
         });
 
-        // 7. Navigation
+        // 
         document.getElementById('btn-go-voting').addEventListener('click', () => {
             const dataToSave = { imposterIndices: imposterIndices, ...gameState };
             localStorage.setItem('imposterGameData', JSON.stringify(dataToSave));
             window.location.href = 'results.html';
         });
 
-        // 8. Debug
+        // 
         if(document.getElementById('debug-cat')) {
             document.getElementById('debug-cat').innerText = gameState.category;
             document.getElementById('debug-word').innerText = gameState.chosenWord;
